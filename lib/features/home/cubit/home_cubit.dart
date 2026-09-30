@@ -9,8 +9,6 @@ import '../../../core/utils/json_list_parser.dart';
 
 part 'home_state.dart';
 
-/// عقل شاشة الهوم: بيجيب 3 حاجات مع بعض من السيرفر
-/// (البانر - الكاتيجوريز - المنتجات) عشان يعرضهم كلهم مرة واحدة.
 class HomeCubit extends Cubit<HomeState> {
   final ApiClient apiClient;
   HomeCubit(this.apiClient) : super(HomeLoading());
@@ -18,8 +16,6 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> loadHome() async {
     emit(HomeLoading());
 
-    // بنجيب كل حاجة لوحدها في try/catch منفصل، عشان لو endpoint واحد
-    // فيه مشكلة (401 مثلا) الباقي يفضل شغال وميقفش الشاشة كلها.
     final sliders = await _safeFetch(ApiConstants.sliders, 'SLIDERS')
         .then((list) => list.map((e) => SliderModel.fromJson(e)).toList());
     final categories = await _safeFetch(ApiConstants.categories, 'CATEGORIES')
@@ -30,9 +26,6 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeLoaded(sliders: sliders, categories: categories, products: products));
   }
 
-  /// بتجيب endpoint معين، ولو فشل بتطبع سبب الفشل بالتفصيل في الـ Console
-  /// (هتلاقيه باسم مثلا "SLIDERS ERROR") وترجع List فاضية بدل ما توقف
-  /// الشاشة كلها عن الظهور.
   Future<List<Map<String, dynamic>>> _safeFetch(String endpoint, String label) async {
     try {
       final response = await apiClient.get(endpoint);

@@ -1,4 +1,4 @@
-import 'package:final_project/core/assets/app_assets.dart';
+import 'package:shop_project/core/assets/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/colors/app_colors.dart';
@@ -18,7 +18,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // بننده على loadHome() مرة واحدة بس أول ما الشاشة تتفتح
     return BlocProvider(
       create: (_) => HomeCubit(ApiClient())..loadHome(),
       child: const _HomeView(),
@@ -53,7 +52,6 @@ class _HomeViewState extends State<_HomeView> {
             }
             final loaded = state as HomeLoaded;
 
-            // فلترة المنتجات حسب الكاتيجوري المختارة (لو مختارة)
             final products = selectedCategory == -1
                 ? loaded.products
                 : loaded.products.where((p) => p.categoryId == selectedCategory).toList();
@@ -70,15 +68,12 @@ class _HomeViewState extends State<_HomeView> {
                         children: [
                           Row(
                             children: [
-                              // TODO: asset -> حط هنا لوجو Stylish الصغير بدل الأيقونة
                               Image.asset(AppAssets.logo,width: 70),
                               const SizedBox(width: 8),
 
                             ],
                           ),
                           const SizedBox(height: 12),
-                          // شريط البحث زي التصميم بالظبط: بوكس كامل العرض،
-                          // مش أيقونة صغيرة بس. لما تدوس عليه بيوديك لشاشة البحث.
                           GestureDetector(
                             onTap: () => Navigator.push(
                               context,
@@ -116,7 +111,7 @@ class _HomeViewState extends State<_HomeView> {
                     const SliverToBoxAdapter(
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Text('لا توجد تصنيفات حاليا (تأكد إن الـ API بترجع بيانات)',
+                        child: Text('no ',
                             style: TextStyle(color: AppColors.grey, fontSize: 12)),
                       ),
                     ),

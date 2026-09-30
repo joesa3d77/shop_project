@@ -7,8 +7,6 @@ import '../../../core/network/token_storage.dart';
 
 part 'auth_state.dart';
 
-/// الـ Cubit هو "العقل" بتاع شاشة تسجيل الدخول والتسجيل.
-/// هو اللي بيكلم الـ API ويقرر إيه الـ State اللي الشاشة تتغير له.
 class AuthCubit extends Cubit<AuthState> {
   final ApiClient apiClient;
   AuthCubit(this.apiClient) : super(AuthInitial());
@@ -21,7 +19,6 @@ class AuthCubit extends Cubit<AuthState> {
         'password': password,
       });
 
-      // السيرفر ممكن يرجع اسم الحقل بشكل مختلف، فبنجرب أكتر من احتمال
       final data = response.data;
       final token = _extractToken(data);
 
@@ -30,7 +27,7 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthSuccess());
       } else {
         emit(const AuthFailure(
-            'الرجاء التأكد من اسم الـ token في رد السيرفر (شوف التعليق جوه login في auth_cubit.dart)'));
+            'error'));
       }
     } catch (e) {
       emit(AuthFailure(_errorMessage(e)));
@@ -57,9 +54,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// دالة صغيرة بتدور على التوكن جوه رد السيرفر
-  /// جربنا أكتر من اسم شائع (access_token / token / data.access_token)
-  /// TODO: لو التوكن راجع باسم مختلف، ضيفه هنا
   String? _extractToken(dynamic data) {
     if (data is Map) {
       if (data['access_token'] != null) return data['access_token'].toString();
@@ -74,21 +68,16 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   String _errorMessage(Object e) {
-    // بنطبع الخطأ الحقيقي بالكامل في الـ Console عشان تقدر تشوف
-    // السيرفر رد بإيه بالظبط (هتلاقيه تحت في تبويب "Run")
-    // ignore: avoid_print
     print('AUTH ERROR: $e');
 
-    // ولو السيرفر رجع رسالة خطأ واضحة (زي "email already exists")
-    // بنحاول نطلعها ونعرضها لليوزر بدل رسالة عامة مش مفيدة
     if (e is DioException && e.response?.data != null) {
       final data = e.response!.data;
       if (data is Map) {
         final message = data['message'] ?? data['error'] ?? data['msg'];
         if (message != null) return message.toString();
       }
-      return 'خطأ من السيرفر (${e.response?.statusCode}): ${e.response?.data}';
+      return ' error  (${e.response?.statusCode}): ${e.response?.data}';
     }
-    return 'حصل خطأ، اتأكد من اتصالك بالنت ومن البيانات اللي داخلها';
+    return 'error';
   }
 }
