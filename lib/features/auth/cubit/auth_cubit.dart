@@ -7,8 +7,6 @@ import '../../../core/network/token_storage.dart';
 
 part 'auth_state.dart';
 
-/// الـ Cubit هو "العقل" بتاع شاشة تسجيل الدخول والتسجيل.
-/// هو اللي بيكلم الـ API ويقرر إيه الـ State اللي الشاشة تتغير له.
 class AuthCubit extends Cubit<AuthState> {
   final ApiClient apiClient;
   AuthCubit(this.apiClient) : super(AuthInitial());
